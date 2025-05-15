@@ -17,7 +17,7 @@ const About = () => {
     <>
       <div
         className={cn(
-          "container mx-auto px-4 py-12  w-full",
+          "container h-[calc('100vh-80px')] mx-auto px-4 py-12  w-full",
           "flex flex-col md:flex-row items-center gap-12 "
         )}
       >
@@ -82,7 +82,7 @@ const About = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      
     </>
   );
 };
