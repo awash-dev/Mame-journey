@@ -18,7 +18,7 @@ const skillsData: SkillData[] = [
 
 const About = () => {
   return (
-    <div className="min-h-[calc(100vh-80px)]">
+    <div className="h-[calc(100vh-80px)]">
       <div
         className={cn(
           "container mx-auto px-4 py-8 sm:py-12 w-full",
@@ -26,7 +26,7 @@ const About = () => {
         )}
       >
         {/* Image Section (Left on Desktop) */}
-        <div className="w-full md:w-1/2 flex justify-center">
+        <div className="w-full mt-32 md:mt-0 md:w-1/2 flex justify-center">
           <div className="relative">
             <img
               src="/About.jpg" // Replace with your image path
