@@ -13,12 +13,12 @@ import { cn } from "@/lib/utils";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { FaFolder } from "react-icons/fa";
 
 // Dummy blog post data (replace with your actual data)
 const blogPosts = [
@@ -134,21 +134,26 @@ const BlogCard = ({ post }: { post: (typeof blogPosts)[0] }) => {
       className={cn(
         "overflow-hidden transition-all duration-300",
         "border border-gray-800 shadow-lg hover:shadow-xl",
-        "bg-card text-card-foreground", // Use semantic colors
-        "hover:scale-[1.02] hover:border-indigo-500/50 flex flex-col"
+        "bg-card text-card-foreground",
+        " hover:border-indigo-500/50 flex flex-col"
       )}
     >
       <div className="relative">
         <img
           src={post.imageUrl}
           alt={post.title}
-          className="w-full h-48 object-cover rounded-t-lg"
+          className="w-full h-48 object-cover rounded-t-lg -mt-10 "
         />
       </div>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{post.title}</CardTitle>
         <CardDescription className="text-muted-foreground">
           {post.description}
+        </CardDescription>
+      </CardHeader>
+      <CardHeader>
+        <CardDescription className="flex items-center gap-4 ">
+          <FaFolder className="text-[20px]" /> {post.category}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-end">
@@ -169,7 +174,14 @@ const BlogCard = ({ post }: { post: (typeof blogPosts)[0] }) => {
 };
 
 const BlogsPage = () => {
-  const categories = ["Finance", "Marketing", "Programming"];
+  const categories = [
+    "Finance",
+    "Marketing",
+    "Programming",
+    "General",
+    "Business",
+    "Technology",
+  ];
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 4;
@@ -184,7 +196,7 @@ const BlogsPage = () => {
     } else {
       setFilteredPosts(blogPosts);
     }
-    setCurrentPage(1); // Reset to first page when category changes
+    setCurrentPage(1);
   }, [selectedCategory]);
 
   // Get current posts
@@ -199,114 +211,130 @@ const BlogsPage = () => {
 
   return (
     <div className="py-12 bg-background">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold text-foreground mb-8 text-center">
-          Latest Blogs
-        </h1>
-
-        {/* Category Buttons */}
-        <div className="flex justify-center mb-8 space-x-4">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              onClick={() => setSelectedCategory(category)}
-              className={cn(
-                "text-foreground hover:text-white hover:bg-indigo-500/20",
-                "border border-gray-700", // Keep a consistent border
-                "transition-colors duration-200",
-                selectedCategory === category
-                  ? "bg-indigo-500/90 border-indigo-500 shadow-lg text-white" // Keep text white for active
-                  : "hover:bg-indigo-500/20"
-              )}
-            >
-              {category}
-            </Button>
-          ))}
-          <Button
-            variant={selectedCategory === null ? "default" : "outline"}
-            onClick={() => setSelectedCategory(null)}
-            className={cn(
-              "text-foreground hover:text-white hover:bg-indigo-500/20",
-              "border border-gray-700",
-              "transition-colors duration-200",
-              selectedCategory === null
-                ? "bg-indigo-500/90 border-indigo-500 shadow-lg text-white"
-                : "hover:bg-indigo-500/20"
-            )}
-          >
-            All
-          </Button>
-        </div>
+      <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8">
+        {/* Category Sidebar */}
+        <aside className="w-full lg:w-64 lg:sticky lg:top-20 h-fit">
+          <Card className="  shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Categories
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={
+                      selectedCategory === category ? "default" : "ghost"
+                    }
+                    onClick={() => setSelectedCategory(category)}
+                    className={cn(
+                      "w-full justify-start text-foreground hover:text-white",
+                      "hover:bg-indigo-500/20 transition-colors duration-200",
+                      selectedCategory === category
+                        ? "bg-indigo-500/90 text-white font-semibold"
+                        : "hover:bg-indigo-500/20"
+                    )}
+                  >
+                    <FaFolder className="mr-2 h-4 w-4" />
+                    {category}
+                  </Button>
+                ))}
+                <Button
+                  variant={selectedCategory === null ? "default" : "ghost"}
+                  onClick={() => setSelectedCategory(null)}
+                  className={cn(
+                    "w-full justify-start text-foreground hover:text-white",
+                    "hover:bg-indigo-500/20 transition-colors duration-200",
+                    selectedCategory === null
+                      ? "bg-indigo-500/90 text-white font-semibold"
+                      : "hover:bg-indigo-500/20"
+                  )}
+                >
+                  <FaFolder className="mr-2 h-4 w-4" />
+                  All
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </aside>
 
         {/* Blog Post Grid */}
-        <div
-          className={cn(
-            "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8",
-            "w-full"
+        <main className="flex-1 w-full">
+          <h1 className="text-3xl font-bold text-foreground mb-8 text-center">
+            Latest Blogs
+          </h1>
+          <div
+            className={cn(
+              "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8",
+              "w-full"
+            )}
+          >
+            {currentPosts.map((post) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <BlogCard post={post} />
+              </motion.div>
+            ))}
+          </div>
+          {filteredPosts.length === 0 && (
+            <div className="text-center text-muted-foreground py-8 col-span-full">
+              No posts found in this category.
+            </div>
           )}
-        >
-          {currentPosts.map((post) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <BlogCard post={post} />
-            </motion.div>
-          ))}
-        </div>
-        {filteredPosts.length === 0 && (
-          <div className="text-center text-muted-foreground py-8 col-span-full">
-            No posts found in this category.
-          </div>
-        )}
 
-        {/* Pagination */}
-        {filteredPosts.length > postsPerPage && (
-          <div className="flex justify-center mt-8">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  {currentPage > 1 && (
-                    <PaginationPrevious
-                      href="#"
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                    />
-                  )}
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => {
-                  const pageNumber = i + 1;
-                  return (
-                    <PaginationItem key={pageNumber}>
-                      <PaginationLink
+          {/* Pagination */}
+          {filteredPosts.length > postsPerPage && (
+            <div className="flex justify-center mt-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    {currentPage > 1 && (
+                      <PaginationPrevious
                         href="#"
-                        onClick={() => paginate(pageNumber)}
-                        isActive={currentPage === pageNumber}
-                      >
-                        {pageNumber}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                      />
+                    )}
+                  </PaginationItem>
+                  {Array.from({ length: totalPages }, (_, i) => {
+                    const pageNumber = i + 1;
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          href="#"
+                          onClick={() => paginate(pageNumber)}
+                          isActive={currentPage === pageNumber}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
 
-                <PaginationItem>
-                  {currentPage < totalPages && (
-                    <PaginationNext
-                      href="#"
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                    />
-                  )}
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
+                  <PaginationItem>
+                    {currentPage < totalPages && (
+                      <PaginationNext
+                        href="#"
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages)
+                          )
+                        }
+                      />
+                    )}
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );
