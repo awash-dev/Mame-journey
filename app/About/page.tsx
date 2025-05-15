@@ -37,7 +37,7 @@ const About = () => {
                 " dark:border-gray-800"
               )}
             />
-            <div className="absolute -z-10 -inset-2 bg-gradient-to-r from-purple-200 to-pink-200 dark:from-purple-900 dark:to-pink-900 rounded-[50px] sm:rounded-[70px] opacity-70"></div>
+           
           </div>
         </div>
 
