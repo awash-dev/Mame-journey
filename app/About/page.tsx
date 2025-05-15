@@ -42,7 +42,7 @@ const About = () => {
         </div>
 
         {/* Text and Skills Section (Right on Desktop) */}
-        <div className="w-full md:w-1/2 space-y-4 sm:space-y-6">
+        <div className="w-full md:w-1/2 md:space-y-6">
           <h2
             className={cn(
               "text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text",
