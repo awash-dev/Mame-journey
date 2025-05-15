@@ -7,7 +7,7 @@ import React from "react";
 export default function Blogs() {
   return (
     <div className="">
-      <div className="w-full h-[150px] bg-[url('/blog.jpg')] shadow-b-md dark:bg-gray-900 dark:text-white bg-white flex items-center justify-center bg-cover bg-center">
+      <div className="w-full mt-20 md:mt-0 h-[150px] bg-[url('/blog.jpg')] shadow-b-md dark:bg-gray-900 dark:text-white bg-white flex items-center justify-center bg-cover bg-center">
         <h1 className="text-4xl font-heebo  font-extrabold  ">Blogs Post</h1>
       </div>
       <div className="bg-gray-50 dark:bg-black dark:text-white">
