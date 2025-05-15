@@ -80,7 +80,7 @@ export default function Hpme() {
               variants={textVariants}
               initial="hidden"
               animate="visible"
-              className="md:text-3xl text-[20px] sm:text-4xl font-bold text-center " // Increased font size on larger screens
+              className="md:text-3xl mt-26 md:mt-0 text-[20px] sm:text-4xl font-bold text-center " // Increased font size on larger screens
             >
               Mohammed’s Blog
             </motion.h1>
