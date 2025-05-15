@@ -1,6 +1,7 @@
+"use client";
+
 import React from "react";
 import { cn } from "@/lib/utils";
-import Footer from "@/components/Footer";
 
 interface SkillData {
   name: string;
@@ -10,37 +11,45 @@ const skillsData: SkillData[] = [
   { name: "Computer Science" },
   { name: "Marketing" },
   { name: "Finance" },
+  { name: "Web Development" },
+  { name: "UI/UX Design" },
+  { name: "Data Analysis" },
 ];
 
 const About = () => {
   return (
-    <>
+    <div className="min-h-[calc(100vh-80px)]">
       <div
         className={cn(
-          "container h-[calc('100vh-80px')] mx-auto px-4 py-12  w-full",
-          "flex flex-col md:flex-row items-center gap-12 "
+          "container mx-auto px-4 py-8 sm:py-12 w-full",
+          "flex flex-col md:flex-row items-center gap-8 md:gap-12"
         )}
       >
         {/* Image Section (Left on Desktop) */}
-        <div className="md:w-1/2 flex justify-center">
-          <img
-            src="/About.jpg" // Replace with your image path
-            alt="About Me"
-            className={cn(
-              "max-w-md w-full",
-              "h-[300px] w-[300px] rounded-[60px]",
-              "object-cover object-center shadow-2xl"
-            )}
-          />
+        <div className="w-full md:w-1/2 flex justify-center order-1 md:order-none">
+          <div className="relative">
+            <img
+              src="/About.jpg" // Replace with your image path
+              alt="About Me"
+              className={cn(
+                "w-full max-w-xs sm:max-w-sm md:max-w-md",
+                "h-[250px] sm:h-[300px] w-[250px] sm:w-[300px]",
+                "rounded-[40px] sm:rounded-[60px]",
+                "object-cover object-center shadow-xl sm:shadow-2xl",
+                "border-4 border-white dark:border-gray-800"
+              )}
+            />
+            <div className="absolute -z-10 -inset-2 bg-gradient-to-r from-purple-200 to-pink-200 dark:from-purple-900 dark:to-pink-900 rounded-[50px] sm:rounded-[70px] opacity-70"></div>
+          </div>
         </div>
 
         {/* Text and Skills Section (Right on Desktop) */}
-        <div className="md:w-1/2 space-y-6">
+        <div className="w-full md:w-1/2 space-y-4 sm:space-y-6">
           <h2
             className={cn(
-              "text-3xl font-bold text-transparent bg-clip-text",
+              "text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text",
               "bg-gradient-to-r from-purple-400 to-pink-600",
-              "tracking-tight"
+              "text-center md:text-left tracking-tight"
             )}
           >
             About Me
@@ -48,7 +57,8 @@ const About = () => {
           <p
             className={cn(
               "text-black dark:text-white leading-relaxed",
-              "text-lg"
+              "text-base sm:text-lg",
+              "text-center md:text-left"
             )}
           >
             Hello! I'm Mohammed, a passionate software developer with a strong
@@ -60,30 +70,34 @@ const About = () => {
           </p>
 
           {/* Skills Section */}
-          <div>
+          <div className="pt-2">
             <h3
               className={cn(
-                "text-2xl font-semibold dark:text-white text-black mb-4",
-                "tracking-wide"
+                "text-xl sm:text-2xl font-semibold dark:text-white text-black mb-3 sm:mb-4",
+                "text-center md:text-left tracking-wide"
               )}
             >
               Skills
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3">
               {skillsData.map((skill, index) => (
                 <React.Fragment key={index}>
-                  <span className="text-sm font-medium ">{skill.name}</span>
-                  {index < skillsData.length - 1 && (
-                    <span className="text-gray-300"> | </span>
-                  )}
+                  <span 
+                    className={cn(
+                      "text-xs sm:text-sm font-medium px-2 py-1 rounded-full",
+                      "bg-gray-100 dark:bg-gray-800",
+                      "border border-gray-200 dark:border-gray-700"
+                    )}
+                  >
+                    {skill.name}
+                  </span>
                 </React.Fragment>
               ))}
             </div>
           </div>
         </div>
       </div>
-      
-    </>
+    </div>
   );
 };
 
