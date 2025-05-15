@@ -79,18 +79,20 @@ const About = () => {
             >
               Skills
             </h3>
-            <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3">
+            <div className="flex flex-wrap justify-center md:justify-start items-center gap-1 sm:gap-2">
               {skillsData.map((skill, index) => (
                 <React.Fragment key={index}>
                   <span 
                     className={cn(
-                      "text-xs sm:text-sm font-medium px-2 py-1 rounded-full",
-                      "bg-gray-100 dark:bg-gray-800",
-                      "border border-gray-200 dark:border-gray-700"
+                      "text-sm sm:text-base font-medium",
+                      "text-gray-700 dark:text-gray-300"
                     )}
                   >
                     {skill.name}
                   </span>
+                  {index !== skillsData.length - 1 && (
+                    <span className="text-gray-500 dark:text-gray-400">|</span>
+                  )}
                 </React.Fragment>
               ))}
             </div>
