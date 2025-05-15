@@ -26,7 +26,7 @@ const About = () => {
         )}
       >
         {/* Image Section (Left on Desktop) */}
-        <div className="w-full md:w-1/2 flex justify-center order-1 md:order-none">
+        <div className="w-full md:w-1/2 flex justify-center">
           <div className="relative">
             <img
               src="/About.jpg" // Replace with your image path
@@ -35,8 +35,8 @@ const About = () => {
                 "w-full max-w-xs sm:max-w-sm md:max-w-md",
                 "h-[250px] sm:h-[300px] w-[250px] sm:w-[300px]",
                 "rounded-[40px] sm:rounded-[60px]",
-                "object-cover object-center shadow-xl sm:shadow-2xl",
-                "border-4 border-white dark:border-gray-800"
+                " shadow-xl sm:shadow-2xl",
+                " dark:border-gray-800"
               )}
             />
             <div className="absolute -z-10 -inset-2 bg-gradient-to-r from-purple-200 to-pink-200 dark:from-purple-900 dark:to-pink-900 rounded-[50px] sm:rounded-[70px] opacity-70"></div>
