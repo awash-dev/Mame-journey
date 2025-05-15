@@ -24,7 +24,7 @@ const About = () => {
         )}
       >
         {/* Image Section (Left on Desktop) */}
-        <div className="w-full mt-26 md:mt-0 md:w-1/2 flex justify-center">
+        <div className="w-full mt-18 md:mt-0 md:w-1/2 flex justify-center">
           <div className="relative">
             <img
               src="/About.jpg" // Replace with your image path
