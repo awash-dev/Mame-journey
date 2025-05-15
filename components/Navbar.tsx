@@ -128,7 +128,7 @@ const Navbar: React.FC = () => {
       {searchTerm && (
         <div className="absolute bottom-full mb-1 text-xs text-gray-500 dark:text-gray-400">
           {searchResults.length > 0
-            ? `${searchIndex + 100}/${searchResults.length}  ↑↓  Enter`
+            ? `${searchIndex + 1}/${searchResults.length}  ↑↓  Enter`
             : "No results found."}
         </div>
       )}
@@ -317,4 +317,14 @@ const Navbar: React.FC = () => {
             <div className="flex flex-col items-center space-y-6 px-4">
               <NavLink href="/" label="Home" />
               <NavLink href="/About" label="About" />
-              <NavLink href="/Blog"
+              <NavLink href="/Blog" label="Blog" />
+              <NavLink href="/Contact" label="Contact" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+export default Navbar;
