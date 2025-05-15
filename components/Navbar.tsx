@@ -127,7 +127,7 @@ const Navbar: React.FC = () => {
       {searchTerm && (
         <div className="absolute bottom-full mb-1 text-xs text-gray-500 dark:text-gray-400">
           {searchResults.length > 0
-            ? `${searchIndex + 1}/${searchResults.length}  ↑↓  Enter`
+            ? `${searchIndex + 100}/${searchResults.length}  ↑↓  Enter`
             : "No results found."}
         </div>
       )}
@@ -207,11 +207,11 @@ const Navbar: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="bg-white dark:bg-gray-900 h-[80px] items-center dark:text-white text-black sticky top-0 z-50 px-4 md:px-6 lg:px-8 py-3"
+        className="bg-white fixed w-full dark:bg-gray-900 md:sticky h-[80px] items-center dark:text-white text-black  top-0 z-50 px-4 md:px-6 lg:px-8 py-3"
       >
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="font-bold text-2xl font-serif">
+          <Link href="/" className="font-bold md:text-2xl text-[20px]  font-serif">
             Mohammed's
             <span className="text-indigo-600 dark:text-indigo-400"> Blog</span>
           </Link>
