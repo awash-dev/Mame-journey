@@ -11,8 +11,6 @@ const skillsData: SkillData[] = [
   { name: "Computer Science" },
   { name: "Marketing" },
   { name: "Finance" },
-  { name: "Web Development" },
-  { name: "UI/UX Design" },
   { name: "Data Analysis" },
 ];
 
