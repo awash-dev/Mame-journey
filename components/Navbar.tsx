@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch, FaBars, FaTimes, FaSun, FaMoon } from "react-icons/fa";
 import { BsSun, BsMoonStarsFill } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -184,6 +184,23 @@ const Navbar: React.FC = () => {
     </motion.button>
   );
 
+  const MobileDarkModeSwitch: React.FC = () => (
+    <motion.button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label="Toggle Dark Mode"
+      aria-pressed={isDark}
+      whileTap={{ scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      className="flex items-center gap-2" // Added gap for spacing
+    >
+      {isDark ? (
+        <span className="text-gray-700 text-[20px]  dark:text-gray-300"><FaSun/></span>
+      ) : (
+        <span className="text-yellow-500 text-[20px] dark:text-yellow-400"> <FaMoon/> </span>
+      )}
+    </motion.button>
+  );
+
   return (
     <>
       <motion.nav
@@ -240,7 +257,7 @@ const Navbar: React.FC = () => {
               <FaSearch className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
             <span className="text-gray-500 dark:text-gray-400"> | </span>
-            <DarkModeSwitch />
+            <MobileDarkModeSwitch />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle Menu"

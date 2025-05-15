@@ -120,7 +120,7 @@ export default function Hpme() {
               className="mt-8 flex justify-center" // Increased margin-top
             >
               <img
-                src="/home.jpg"
+                src="/Home.jpg"
                 alt="Mohammed"
                 className="rounded-lg shadow-lg max-w-full sm:max-w-md w-full h-auto sm:h-[300px]" //Made image responsive
               />
