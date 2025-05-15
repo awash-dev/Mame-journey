@@ -89,6 +89,7 @@ const Navbar: React.FC = () => {
     <Link
       href={href}
       className="text-lg hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+      onClick={() => setMobileMenuOpen(false)}
     >
       {label}
     </Link>
@@ -191,12 +192,16 @@ const Navbar: React.FC = () => {
       aria-pressed={isDark}
       whileTap={{ scale: 0.9 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      className="flex items-center gap-2" // Added gap for spacing
+      className="flex items-center gap-2"
     >
       {isDark ? (
-        <span className="text-gray-700 text-[20px]  dark:text-gray-300"><FaSun/></span>
+        <span className="text-gray-700 text-[20px] dark:text-gray-300">
+          <FaSun />
+        </span>
       ) : (
-        <span className="text-yellow-500 text-[20px] dark:text-yellow-400"> <FaMoon/> </span>
+        <span className="text-yellow-500 text-[20px] dark:text-yellow-400">
+          <FaMoon />
+        </span>
       )}
     </motion.button>
   );
@@ -207,11 +212,11 @@ const Navbar: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="bg-white fixed w-full dark:bg-gray-900 md:sticky h-[80px] items-center dark:text-white text-black  top-0 z-50 px-4 md:px-6 lg:px-8 py-3"
+        className="bg-white fixed w-full dark:bg-gray-900 md:sticky h-[80px] items-center dark:text-white text-black top-0 z-50 px-4 md:px-6 lg:px-8 py-3"
       >
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="font-bold md:text-2xl text-[20px]  font-serif">
+          <Link href="/" className="font-bold md:text-2xl text-[20px] font-serif">
             Mohammed's
             <span className="text-indigo-600 dark:text-indigo-400"> Blog</span>
           </Link>
@@ -283,7 +288,7 @@ const Navbar: React.FC = () => {
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black z-40"
-              onClick={() => setSearchBoxOpen(false)} // Close on backdrop click
+              onClick={() => setSearchBoxOpen(false)}
             />
             {/* Search Box */}
             <motion.div
@@ -300,23 +305,16 @@ const Navbar: React.FC = () => {
       </AnimatePresence>
 
       {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute left-0 w-full bg-white dark:bg-gray-900 z-40 py-4 shadow-md rounded-b-lg max-h-[80vh] overflow-y-auto">
-          <div className="flex flex-col items-center space-y-4 px-4">
-            <NavLink href="/" label="Home" />
-            <NavLink href="/About" label="About" />
-            <NavLink href="/Blog" label="Blog" />
-            <Link
-              href="/Contact"
-              className="mt-2 px-4 py-2 border-2 border-black dark:border-white text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-lg transition font-mono text-lg"
-            >
-              Contact
-            </Link>
-          </div>
-        </div>
-      )}
-    </>
-  );
-};
-
-export default Navbar;
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden fixed top-[80px] left-0 w-full bg-white dark:bg-gray-900 z-40 py-4 shadow-md"
+          >
+            <div className="flex flex-col items-center space-y-6 px-4">
+              <NavLink href="/" label="Home" />
+              <NavLink href="/About" label="About" />
+              <NavLink href="/Blog"
