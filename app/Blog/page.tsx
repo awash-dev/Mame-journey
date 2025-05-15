@@ -1,19 +1,18 @@
-import BlogPosts from "@/post/BlogPosts";
+"use client";
+import BlogsPage from "@/post/BlogPost";
 import React from "react";
-import Catagory from "@/post/Catagory";
+// import BlogPosts from "@/post/BlogPosts"; // Adjusted import path 
+// import Catagory from "@/post/Catagory"; // No direct replacement, using sidebar within BlogsPage
 
 export default function Blogs() {
   return (
     <div className="">
-      {/* <div className="w-full h-[150px] shadow-b-md dark:bg-gray-900 dark:text-white bg-white flex items-center justify-center ">
-        <h1 className="text-4xl font-heebo">Blogs Post</h1>
-      </div> */}
+      <div className="w-full h-[150px] bg-[url('/blog.jpg')] shadow-b-md dark:bg-gray-900 dark:text-white bg-white flex items-center justify-center bg-cover bg-center">
+        <h1 className="text-4xl font-heebo  font-extrabold  ">Blogs Post</h1>
+      </div>
       <div className="bg-gray-50 dark:bg-black dark:text-white">
-        {/* left side blogs  */}
-        <BlogPosts />
-
-        {/* riht side Category  */}
-        <Catagory/>
+        {/* BlogsPage component, which now includes the sidebar */}
+        <BlogsPage />
       </div>
     </div>
   );

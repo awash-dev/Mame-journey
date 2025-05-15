@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
@@ -18,13 +18,19 @@ const AnimatedCursor: React.FC = () => {
     };
   }, []);
 
-  const cursorColor = isDarkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)"; // White for dark, black for light
-  const cursorBorderColor = isDarkMode ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)";
-  const cursorShadowColor = isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)";
-
+  const cursorColor = isDarkMode
+    ? "rgba(255, 255, 255, 0.3)"
+    : "rgba(0, 0, 0, 0.3)"; // White for dark, black for light
+  const cursorBorderColor = isDarkMode
+    ? "rgba(255, 255, 255, 0.5)"
+    : "rgba(0, 0, 0, 0.5)";
+  const cursorShadowColor = isDarkMode
+    ? "rgba(255, 255, 255, 0.7)"
+    : "rgba(0, 0, 0, 0.7)";
 
   return (
     <motion.div
+      className="hidden md:block"
       style={{
         position: "fixed",
         top: 0,

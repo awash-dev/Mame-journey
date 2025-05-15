@@ -80,7 +80,7 @@ export default function Hpme() {
               variants={textVariants}
               initial="hidden"
               animate="visible"
-              className="text-3xl font-bold text-center "
+              className="md:text-3xl text-[20px] sm:text-4xl font-bold text-center " // Increased font size on larger screens
             >
               Mohammed’s Blog
             </motion.h1>
@@ -88,7 +88,7 @@ export default function Hpme() {
               variants={textVariants}
               initial="hidden"
               animate="visible"
-              className="mt-4 text-xl leading-relaxed px-56"
+              className="mt-4 text-lg sm:text-xl leading-relaxed px-4 sm:px-8 md:px-16 lg:px-32" // Adjusted padding for responsiveness
             >
               A collection of blogs written by Mohammed, exploring topics
               including finance, marketing, and web devepment& design .
@@ -97,12 +97,11 @@ export default function Hpme() {
               variants={buttonVariants}
               initial="hidden"
               animate="visible"
-              whileTap={"scale:0.5"}
-              className="flex justify-center " // Removed whileTap
+              className="flex justify-center "
             >
               <Link
                 href="/Blog"
-                className="bg-black py-3 px-12 text-white flex gap-4 rounded-2xl dark:bg-white dark:text-black mt-4"
+                className="bg-black py-3 px-8 sm:px-12 text-white flex gap-4 rounded-2xl dark:bg-white dark:text-black mt-4" // Adjusted padding
               >
                 visit Blog
                 <motion.div
@@ -118,12 +117,12 @@ export default function Hpme() {
               variants={imageVariants}
               initial="hidden"
               animate="visible"
-              className="mt-4  flex justify-center"
+              className="mt-8 flex justify-center" // Increased margin-top
             >
               <img
                 src="/home.jpg"
                 alt="Mohammed"
-                className="rounded-lg shadow-lg max-w-md w-full h-[300px]"
+                className="rounded-lg shadow-lg max-w-full sm:max-w-md w-full h-auto sm:h-[300px]" //Made image responsive
               />
             </motion.div>
           </div>
