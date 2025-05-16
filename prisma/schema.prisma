@@ -7,22 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
-model Post {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  content   String?
+model Page {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   @unique
+  tags        String?
   description String?
-  tags      String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String   @db.ObjectId
+  imgUrl      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
