@@ -1,8 +1,7 @@
-"use client";
+"use client"
+
 import BlogsPage from "@/post/BlogPost";
 import React from "react";
-// import BlogPosts from "@/post/BlogPosts"; // Adjusted import path 
-// import Catagory from "@/post/Catagory"; // No direct replacement, using sidebar within BlogsPage
 
 export default function Blogs() {
   return (

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -20,115 +21,9 @@ import {
 } from "@/components/ui/pagination";
 import { FaFolder } from "react-icons/fa";
 
-// Dummy blog post data (replace with your actual data)
-const blogPosts = [
-  {
-    id: 1,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "The Future of AI in Finance",
-    description:
-      "Explore how AI is transforming the finance industry, from algorithmic trading to personalized financial advice.",
-    readMoreLink: "/blog/finance/ai-in-finance",
-    category: "Finance",
-  },
-  {
-    id: 2,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Marketing in the Digital Age",
-    description:
-      "Discover the latest digital marketing strategies and techniques to reach your target audience and grow your business.",
-    readMoreLink: "/blog/marketing/digital-marketing",
-    category: "Marketing",
-  },
-  {
-    id: 3,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Mastering React Hooks",
-    description:
-      "A deep dive into React Hooks, with practical examples and best practices for managing state and side effects.",
-    readMoreLink: "/blog/programming/react-hooks",
-    category: "Programming",
-  },
-  {
-    id: 4,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Financial Planning for Startups",
-    description:
-      "Learn how to create a solid financial plan for your startup, including budgeting, forecasting, and fundraising.",
-    readMoreLink: "/blog/finance/startup-finance",
-    category: "Finance",
-  },
-  {
-    id: 5,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "SEO Best Practices 2024",
-    description:
-      "Stay ahead of the curve with the latest SEO best practices and strategies to improve your website ranking.",
-    readMoreLink: "/blog/marketing/seo-2024",
-    category: "Marketing",
-  },
-  {
-    id: 6,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Advanced JavaScript Concepts",
-    description:
-      "Explore advanced JavaScript concepts such as closures, prototypes, async/await, and more.",
-    readMoreLink: "/blog/programming/js-advanced",
-    category: "Programming",
-  },
-  {
-    id: 7,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Algorithmic Trading Strategies",
-    description:
-      "Explore different algorithmic trading strategies used in the finance industry.",
-    readMoreLink: "/blog/finance/algorithmic-trading",
-    category: "Finance",
-  },
-  {
-    id: 8,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Email Marketing Best Practices",
-    description: "Learn how to create effective email marketing campaigns.",
-    readMoreLink: "/blog/marketing/email-marketing",
-    category: "Marketing",
-  },
-  {
-    id: 9,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Clean Code Principles",
-    description:
-      "Understand the importance of writing clean and maintainable code.",
-    readMoreLink: "/blog/programming/clean-code",
-    category: "Programming",
-  },
-  {
-    id: 10,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "10x Your Productivity",
-    description: "Tips and tricks to boost your productivity.",
-    readMoreLink: "/blog/productivity",
-    category: "General",
-  },
-  {
-    id: 11,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "The Art of Negotiation",
-    description: "Learn effective negotiation techniques.",
-    readMoreLink: "/blog/negotiation",
-    category: "Business",
-  },
-  {
-    id: 12,
-    imageUrl: "https://placehold.co/400x200/EEE/31343C",
-    title: "Understanding Quantum Computing",
-    description: "A beginner's guide to quantum computing.",
-    readMoreLink: "/blog/quantum-computing",
-    category: "Technology",
-  },
-];
+import { getBlogs, Post } from "@/lib/action"; // Assuming getBlogs is in "@/lib/actions"
 
-const BlogCard = ({ post }: { post: (typeof blogPosts)[0] }) => {
+const BlogCard = ({ post }: { post: Post }) => {
   return (
     <Card
       className={cn(
@@ -139,11 +34,13 @@ const BlogCard = ({ post }: { post: (typeof blogPosts)[0] }) => {
       )}
     >
       <div className="relative">
-        <img
-          src={post.imageUrl}
-          alt={post.title}
-          className="w-full h-48 object-cover rounded-t-lg -mt-10 "
-        />
+        {post.image && (
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full h-48 object-cover rounded-t-lg -mt-10 "
+          />
+        )}
       </div>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{post.title}</CardTitle>
@@ -153,12 +50,12 @@ const BlogCard = ({ post }: { post: (typeof blogPosts)[0] }) => {
       </CardHeader>
       <CardHeader>
         <CardDescription className="flex items-center gap-4 ">
-          <FaFolder className="text-[20px]" /> {post.category}
+          <FaFolder className="text-[20px]" /> {post.Catagory}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-end">
         <a
-          href={post.readMoreLink}
+          href={`/post/${post.id}`} // Assuming you have dynamic routes for blog posts
           className={cn(
             "w-full bg-indigo-500/90 text-white hover:bg-indigo-500",
             "transition-colors duration-200",
@@ -174,29 +71,39 @@ const BlogCard = ({ post }: { post: (typeof blogPosts)[0] }) => {
 };
 
 const BlogsPage = () => {
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const categories = [
-    "Finance",
-    "Marketing",
-    "Programming",
-    "General",
-    "Business",
-    "Technology",
+    ...new Set(allPosts.map((post) => post.Catagory).filter(Boolean)), // Extract categories from fetched data
   ];
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 4;
+  const postsPerPage = 6; // Adjust as needed
 
-  const [filteredPosts, setFilteredPosts] = useState(blogPosts);
+  const filteredPosts = selectedCategory
+    ? allPosts.filter((post) => post.Catagory === selectedCategory)
+    : allPosts;
 
   useEffect(() => {
-    if (selectedCategory) {
-      setFilteredPosts(
-        blogPosts.filter((post) => post.category === selectedCategory)
-      );
-    } else {
-      setFilteredPosts(blogPosts);
-    }
-    setCurrentPage(1);
+    const fetchBlogs = async () => {
+      setLoading(true);
+      const { data, error } = await getBlogs();
+      if (data) {
+        setAllPosts(data);
+        setLoading(false);
+      }
+      if (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1); // Reset page when category changes
   }, [selectedCategory]);
 
   // Get current posts
@@ -209,12 +116,24 @@ const BlogsPage = () => {
 
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
+  if (loading) {
+    return <div className="py-12 text-center">Loading blogs...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="py-12 text-center text-red-500">
+        Error loading blogs: {error}
+      </div>
+    );
+  }
+
   return (
     <div className="py-12 bg-background">
       <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8">
         {/* Category Sidebar */}
         <aside className="w-full lg:w-64 lg:sticky lg:top-20 h-fit">
-          <Card className="  shadow-lg">
+          <Card className=" shadow-lg">
             <CardHeader>
               <CardTitle className="text-lg font-semibold">
                 Categories
@@ -222,6 +141,20 @@ const BlogsPage = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
+                <Button
+                  variant={selectedCategory === null ? "default" : "ghost"}
+                  onClick={() => setSelectedCategory(null)}
+                  className={cn(
+                    "w-full justify-start text-foreground hover:text-white",
+                    "hover:bg-indigo-500/20 transition-colors duration-200",
+                    selectedCategory === null
+                      ? "bg-indigo-500/90 text-white font-semibold"
+                      : "hover:bg-indigo-500/20"
+                  )}
+                >
+                  <FaFolder className="mr-2 h-4 w-4" />
+                  All
+                </Button>
                 {categories.map((category) => (
                   <Button
                     key={category}
@@ -241,20 +174,6 @@ const BlogsPage = () => {
                     {category}
                   </Button>
                 ))}
-                <Button
-                  variant={selectedCategory === null ? "default" : "ghost"}
-                  onClick={() => setSelectedCategory(null)}
-                  className={cn(
-                    "w-full justify-start text-foreground hover:text-white",
-                    "hover:bg-indigo-500/20 transition-colors duration-200",
-                    selectedCategory === null
-                      ? "bg-indigo-500/90 text-white font-semibold"
-                      : "hover:bg-indigo-500/20"
-                  )}
-                >
-                  <FaFolder className="mr-2 h-4 w-4" />
-                  All
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -267,7 +186,7 @@ const BlogsPage = () => {
           </h1>
           <div
             className={cn(
-              "grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-8",
+              "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8",
               "w-full"
             )}
           >
@@ -284,7 +203,11 @@ const BlogsPage = () => {
           </div>
           {filteredPosts.length === 0 && (
             <div className="text-center text-muted-foreground py-8 col-span-full">
-              No posts found in this category.
+              No posts found{" "}
+              {selectedCategory
+                ? `in the "${selectedCategory}" category`
+                : "yet"}
+              .
             </div>
           )}
 

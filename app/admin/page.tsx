@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -13,69 +12,63 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { useRouter } from "next/navigation";
+import { createBlog, Post } from "@/lib/action";
 
-// Define your form schema using Zod
-const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  tags: z.string().optional(),
-  file: z.any().optional(), // Adjust based on how you want to handle files
-  description: z.string().optional(),
-});
+// Define the form data type to match your backend
+type FormData = {
+  title: string;
+  category: string;
+  image: FileList | null;
+  description: string;
+};
 
-interface FormData extends z.infer<typeof formSchema> {}
-
-const MyForm = () => {
-  const [submissionStatus, setSubmissionStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+const CreatePostForm = () => {
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      tags: "",
-      file: null,
+      category: "",
+      image: null,
       description: "",
     },
   });
+  const router = useRouter();
 
-  const onSubmit = async (values: FormData) => {
-    setSubmissionStatus("idle"); // Reset status
-    console.log(values);
+  const onSubmit = async (data: FormData) => {
     try {
-      const response = await fetch("/api", { // Corrected URL
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (response.ok) {
-        console.log("Form submitted successfully!");
-        form.reset(); // Reset the form using react-hook-form
-        setSubmissionStatus("success");
-        setTimeout(() => setSubmissionStatus("idle"), 3000); // Clear success message after 3 seconds
-      } else {
-        console.error("Failed to submit form.");
-        setSubmissionStatus("error");
-      }
+      // Prepare the payload to match your backend (Catagory, not category)
+      const payload = {
+        title: data.title,
+        Catagory: data.category,
+        description: data.description,
+        image:
+          data.image && data.image.length > 0
+            ? await toBase64(data.image[0])
+            : null,
+      };
+      await createBlog(payload);
+      router.push("/Blog");
     } catch (error) {
-      console.error("An error occurred:", error);
-      setSubmissionStatus("error");
+      console.error("Failed to create post:", error);
     }
   };
+
+  // Helper to convert file to base64 string (or handle as needed)
+  const toBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
 
   return (
     <Form {...form}>
       <form
+        className="space-y-4 flex items-center justify-center flex-col"
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 flex items-center justify-center  flex-col"
       >
-        <div className="flex  flex-col  w-[350px] gap-y-4 bg-gray-50 p-4 rounded-md dark:bg-gray-900 mb-1">
+        <div className="flex flex-col w-[350px] gap-y-4 bg-gray-50 p-4 rounded-md dark:bg-gray-900 mb-1">
           <FormField
             control={form.control}
             name="title"
@@ -91,12 +84,12 @@ const MyForm = () => {
           />
           <FormField
             control={form.control}
-            name="tags"
+            name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tags</FormLabel>
+                <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter tags " {...field} />
+                  <Input placeholder="Enter category" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -104,12 +97,16 @@ const MyForm = () => {
           />
           <FormField
             control={form.control}
-            name="file"
+            name="image"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>File</FormLabel>
+                <FormLabel>Image</FormLabel>
                 <FormControl>
-                  <Input type="file" {...field} />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => field.onChange(e.target.files)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -122,35 +119,17 @@ const MyForm = () => {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Enter description "
-                    {...field}
-                  />
+                  <Textarea placeholder="Enter description" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button
-            type="submit"
-            disabled={submissionStatus === "idle" ? false : true}
-          >
-            {submissionStatus === "idle"
-              ? "Submit"
-              : submissionStatus === "success"
-              ? "Success!"
-              : "Submitting..."}
-          </Button>
-
-          {submissionStatus === "error" && (
-            <p className="text-red-500 text-sm">
-              Failed to submit form. Please try again.
-            </p>
-          )}
+          <Button type="submit">Create Post</Button>
         </div>
       </form>
     </Form>
   );
 };
 
-export default MyForm;
+export default CreatePostForm;
