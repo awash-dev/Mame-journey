@@ -1,8 +1,15 @@
 "use server";
 
+import { v2 as cloudinary } from "cloudinary";
 import { db } from "@/db/drizzle";
 import { post, Post } from "@/db/schema"; // Import schema and types
 import { eq } from "drizzle-orm";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function getBlogs(): Promise<{
   data: Post[] | null;
@@ -17,14 +24,38 @@ export async function getBlogs(): Promise<{
   }
 }
 
-export async function createBlog(
-  newPostData: {
-    title: string;
-    description?: string;
-    image?: string | null;
-    Catagory: string;
+export async function uploadImageToCloudinary(
+  file: File
+): Promise<string | null> {
+  try {
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    const base64Image = Buffer.from(bytes).toString("base64");
+    const dataURI = `data:${file.type};base64,${base64Image}`;
+
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(dataURI, (error, uploadResult) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          reject(error);
+        }
+        resolve(uploadResult?.secure_url);
+      });
+    });
+
+    return result as string | null;
+  } catch (error) {
+    console.error("Error uploading to Cloudinary:", error);
+    return null;
   }
-): Promise<{ data: Post | null; error: string | null }> {
+}
+
+export async function createBlog(newPostData: {
+  title: string;
+  description?: string;
+  image?: string | null; // This will be the Cloudinary URL
+  Catagory: string;
+}): Promise<{ data: Post | null; error: string | null }> {
   try {
     const now = Math.floor(Date.now() / 1000); // Get current timestamp in seconds
 
