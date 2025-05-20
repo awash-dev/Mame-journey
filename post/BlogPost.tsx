@@ -21,7 +21,22 @@ import {
 } from "@/components/ui/pagination";
 import { FaFolder } from "react-icons/fa";
 
+// Import ReactMarkdown and remarkGfm
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import { getBlogs, Post } from "@/lib/action"; // Assuming getBlogs is in "@/lib/actions"
+
+// Helper function to strip Markdown and truncate for card description
+const getExcerpt = (markdown: string | undefined, length: number = 150) => {
+  if (!markdown) return "";
+  // A very basic way to strip markdown for an excerpt.
+  // For production, consider a more robust markdown-to-plain-text utility.
+  const plainText = markdown.replace(/[`*#_~]/g, "").replace(/\n/g, " ");
+  return plainText.length > length
+    ? plainText.substring(0, length) + "..."
+    : plainText;
+};
 
 const BlogCard = ({ post }: { post: Post }) => {
   return (
@@ -45,7 +60,8 @@ const BlogCard = ({ post }: { post: Post }) => {
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{post.title}</CardTitle>
         <CardDescription className="text-muted-foreground">
-          {post.description}
+          {/* Display a plain text excerpt of the description */}
+          {getExcerpt(post.description)}
         </CardDescription>
       </CardHeader>
       <CardHeader>
@@ -55,7 +71,7 @@ const BlogCard = ({ post }: { post: Post }) => {
       </CardHeader>
       <CardContent className="flex-grow flex flex-col justify-end">
         <a
-          href={`/post/${post.id}`} // Assuming you have dynamic routes for blog posts
+          href={`/post/${post.id}`} // Ensure this path matches your dynamic route
           className={cn(
             "w-full bg-indigo-500/90 text-white hover:bg-indigo-500",
             "transition-colors duration-200",
@@ -135,9 +151,7 @@ const BlogsPage = () => {
         <aside className="w-full lg:w-64 lg:sticky lg:top-20 h-fit">
           <Card className=" shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                Categories
-              </CardTitle>
+              <CardTitle className="text-lg font-semibold">Categories</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">

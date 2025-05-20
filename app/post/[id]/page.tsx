@@ -9,9 +9,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"; 
+} from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { FaFolder, FaUserCircle } from "react-icons/fa";
 
 export default function BlogPostPage() {
   const { id } = useParams();
@@ -62,20 +63,15 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className="py-12 bg-background">
-      <div className="container mx-auto px-4">
+    <div className=" py-6 bg-background ">
+      <div className=" mx-auto px-14 w-full">
         <Link
           href="/Blog"
-          className="inline-flex items-center mb-4 text-sm font-medium hover:underline"
+          className="fixed items-center  flex text-lg font-medium hover:underline"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blogs
         </Link>
         <Card className="w-full max-w-2xl mx-auto shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">
-              {blogPost.title}
-            </CardTitle>
-          </CardHeader>
           <CardContent className="space-y-4">
             {blogPost.image && (
               <div className="relative w-full overflow-hidden rounded-md aspect-video">
@@ -86,29 +82,33 @@ export default function BlogPostPage() {
                 />
               </div>
             )}
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">
+                {blogPost.title}
+              </CardTitle>
+            </CardHeader>
+
+            <div className="flex gap-4">
+              <p className="text-sm text-gray-500 flex">
+                <FaFolder className="mr-2 h-4 w-4" /> {blogPost.Catagory}
+              </p>
+
+              {blogPost.createdAt && (
+                <p className="text-sm text-gray-500">
+                  {new Date(blogPost.createdAt * 1000).toLocaleDateString()}
+                </p>
+              )}
+              {blogPost.authorId && (
+                <p className="text-sm text-gray-500">
+                  <FaUserCircle className="text-sm text-gray-500 " />{" "}
+                  {blogPost.authorId}
+                </p>
+              )}
+            </div>
             <CardDescription className="text-gray-600">
               {blogPost.description}
             </CardDescription>
-            <p className="text-sm text-gray-500">
-              Category: {blogPost.Catagory}
-            </p>
-            {blogPost.createdAt && (
-              <p className="text-sm text-gray-500">
-                Created At:{" "}
-                {new Date(blogPost.createdAt * 1000).toLocaleDateString()}
-              </p>
-            )}
-            {blogPost.updatedAt && (
-              <p className="text-sm text-gray-500">
-                Updated At:{" "}
-                {new Date(blogPost.updatedAt * 1000).toLocaleDateString()}
-              </p>
-            )}
-            {blogPost.authorId && (
-              <p className="text-sm text-gray-500">
-                Author ID: {blogPost.authorId}
-              </p>
-            )}
+
             {/* Add more details here as needed */}
           </CardContent>
         </Card>
