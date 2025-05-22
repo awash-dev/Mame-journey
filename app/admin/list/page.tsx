@@ -63,7 +63,7 @@ const BlogsPage = () => {
     );
 
   return (
-    <div className="py-2bg-background h-[calc(100vh-250px)]">
+    <div className="py-2 bg-background mt-24">
       <div className="container mx-auto px-4 gap-8">
         <main className="w-full ">
           <div className="overflow-x-auto">

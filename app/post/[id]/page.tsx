@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getBlogById, Post } from "@/lib/action"; // Adjust import path as needed
+import { getBlogById, getBlogs, Post } from "@/lib/action"; // Adjust import path as needed
 import {
   Card,
   CardContent,
@@ -41,15 +41,27 @@ export default function BlogPostPage() {
 
     fetchBlogPost();
   }, [id]);
-
-  if (loading) {
-    return <div className="py-12 text-center">Loading blog post...</div>;
+ if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-500">
+         
+        </div>
+      </div>
+    );
   }
 
+  // Error State with Refresh Button
   if (error) {
     return (
-      <div className="py-12 text-center text-red-500">
-        Error loading blog post: {error}
+      <div className="flex flex-col items-center justify-center py-12 text-red-500">
+        <p className="text-lg mb-4">Error loading blogs: {error}</p>
+        <button
+          onClick={getBlogs} // Call fetchBlogs again on click
+          className="px-6 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        >
+          Refresh
+        </button>
       </div>
     );
   }
@@ -63,7 +75,7 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className=" py-6 bg-background ">
+    <div className=" py-6 bg-background mt-20 ">
       <div className=" mx-auto px-14 w-full">
         <Link
           href="/Blog"
@@ -105,7 +117,7 @@ export default function BlogPostPage() {
                 </p>
               )}
             </div>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-600 text-xl">
               {blogPost.description}
             </CardDescription>
 

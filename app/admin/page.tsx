@@ -1,8 +1,15 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod"; 
+import { toast } from "sonner";
+import { z } from "zod";
+import { Loader2 } from "lucide-react";
+import { uploadImageToCloudinary, createBlog } from "@/lib/action";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -11,79 +18,64 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { uploadImageToCloudinary, createBlog } from "@/lib/action";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { toast } from "sonner";
-import { Loader2, Copy, Check } from "lucide-react";
-
-// Markdown editor and preview
-import SimpleMDE from "react-simplemde-editor";
-import "easymde/dist/easymde.min.css";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import "highlight.js/styles/github-dark.css";
+import { FaX } from "react-icons/fa6";
 
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
   category: z.string().optional(),
-  image: z.any().optional(),
+  image: z.instanceof(FileList).optional(),
   description: z.string().optional(),
 });
 
-interface FormData extends z.infer<typeof formSchema> {}
+type FormValues = z.infer<typeof formSchema>;
+
+type SubmissionStatus = "idle" | "success" | "error";
 
 const CreatePostForm = () => {
-  const [submissionStatus, setSubmissionStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
-  const [uploadingImage, setUploadingImage] = useState(false);
+  const router = useRouter();
+  const [status, setStatus] = useState<SubmissionStatus>("idle");
+  const [uploading, setUploading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [previewMode, setPreviewMode] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const form = useForm<FormData>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       category: "",
-      image: null,
       description: "",
     },
   });
-
-  const router = useRouter();
-  const descriptionContent = form.watch("description");
-
+ 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      form.setValue("image", [file]);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    form.setValue("image", e.target.files as FileList);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const onSubmit = async (values: FormData) => {
-    setSubmissionStatus("idle");
-    setUploadingImage(true);
-    let imageUrl: string | null = null;
+  
+
+  const onSubmit = async (values: FormValues) => {
+    setStatus("idle");
+    setUploading(true);
 
     try {
-      if (values.image && values.image.length > 0) {
+      let imageUrl: string | null = null;
+
+      if (values.image?.length) {
         imageUrl = await uploadImageToCloudinary(values.image[0]);
         if (!imageUrl) {
           toast.error("Failed to upload image");
-          setSubmissionStatus("error");
+          setStatus("error");
           return;
         }
       }
@@ -96,61 +88,30 @@ const CreatePostForm = () => {
       });
 
       if (error) {
-        toast.error("Failed to create blog");
-        setSubmissionStatus("error");
-      } else {
-        toast.success("Blog post created successfully!");
-        form.reset();
-        setImagePreview(null);
-        setSubmissionStatus("success");
-        router.push("/blog");
+        throw new Error(error);
       }
+
+      toast.success("Blog post created successfully!");
+      form.reset();
+      setImagePreview(null);
+      setStatus("success");
+      router.push("/Blog");
     } catch (error) {
-      toast.error("An unexpected error occurred");
-      setSubmissionStatus("error");
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
+      setStatus("error");
     } finally {
-      setUploadingImage(false);
-      setTimeout(() => setSubmissionStatus("idle"), 3000);
+      setUploading(false);
     }
   };
 
-  const mdeOptions = useMemo(() => {
-    return {
-      spellChecker: false,
-      placeholder: "Write your blog post content here using Markdown...",
-      toolbar: [
-        "bold",
-        "italic",
-        "heading",
-        "|",
-        "quote",
-        "unordered-list",
-        "ordered-list",
-        "|",
-        "link",
-        "image",
-        "|",
-        "preview",
-        "side-by-side",
-        "fullscreen",
-        "|",
-        "guide",
-      ] as const,
-      status: false,
-    };
-  }, []);
-
-  const handleCopy = () => {
-    setCopied(true);
-    toast.success("Copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto mt-24 p-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left Column */}
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -183,7 +144,7 @@ const CreatePostForm = () => {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Featured Image</FormLabel>
                     <FormControl>
@@ -198,19 +159,19 @@ const CreatePostForm = () => {
                             <img
                               src={imagePreview}
                               alt="Preview"
-                              className="rounded-md max-h-60 object-cover"
+                              className="rounded-md max-h-[80px] object-cover w-[80px]"
                             />
                             <Button
                               variant="destructive"
                               size="sm"
-                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute top-2 right-2 cursor-pointer opacity-100 transition-opacity"
                               onClick={(e) => {
                                 e.preventDefault();
                                 setImagePreview(null);
-                                form.setValue("image", null);
+                                form.setValue("image", undefined);
                               }}
                             >
-                              Remove
+                              <FaX />
                             </Button>
                           </div>
                         )}
@@ -222,101 +183,22 @@ const CreatePostForm = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            {/* Right Column */}
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <FormLabel>Description</FormLabel>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setPreviewMode(!previewMode)}
-                  >
-                    {previewMode ? "Edit" : "Preview"}
-                  </Button>
-                  {descriptionContent && (
-                    <CopyToClipboard
-                      text={descriptionContent}
-                      onCopy={handleCopy}
-                    >
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="flex items-center gap-1"
-                      >
-                        {copied ? (
-                          <>
-                            <Check className="h-4 w-4 text-green-500" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
-                    </CopyToClipboard>
-                  )}
-                </div>
               </div>
-
               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="h-full">
                     <FormControl>
-                      {previewMode ? (
-                        <div className="prose dark:prose-invert max-w-none p-4 border rounded-md bg-card min-h-[300px]">
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[rehypeHighlight]}
-                            components={{
-                              code({ node, className, children, ...props }) {
-                                const match = /language-(\w+)/.exec(
-                                  className || ""
-                                );
-                                return !inline && match ? (
-                                  <div className="relative">
-                                    <CopyToClipboard
-                                      text={String(children).replace(/\n$/, "")}
-                                      onCopy={() =>
-                                        toast.success("Code copied!")
-                                      }
-                                    >
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="absolute right-2 top-2 opacity-80 hover:opacity-100"
-                                      >
-                                        <Copy className="h-3 w-3" />
-                                      </Button>
-                                    </CopyToClipboard>
-                                    <code className={className} {...props}>
-                                      {children}
-                                    </code>
-                                  </div>
-                                ) : (
-                                  <code className={className} {...props}>
-                                    {children}
-                                  </code>
-                                );
-                              },
-                            }}
-                          >
-                            {field.value || "*Nothing to preview*"}
-                          </ReactMarkdown>
-                        </div>
-                      ) : (
-                        <SimpleMDE
-                          value={field.value || ""}
-                          onChange={field.onChange}
-                          options={mdeOptions}
-                          className="min-h-[300px]"
-                        />
-                      )}
+                      <textarea
+                        {...field}
+                        placeholder="Write your blog post content here..."
+                        className="w-full p-4 border rounded-md bg-card min-h-[240px] focus:outline-none focus:ring-2 focus:ring-primary resize-y h-full"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -325,6 +207,7 @@ const CreatePostForm = () => {
             </div>
           </div>
 
+          {/* Form Actions */}
           <div className="flex justify-end gap-4 pt-4">
             <Button
               type="button"
@@ -333,16 +216,13 @@ const CreatePostForm = () => {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={submissionStatus !== "idle" || uploadingImage}
-            >
-              {uploadingImage ? (
+            <Button type="submit" disabled={status !== "idle" || uploading}>
+              {uploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Uploading...
                 </>
-              ) : submissionStatus === "success" ? (
+              ) : status === "success" ? (
                 "Success!"
               ) : (
                 "Publish Post"

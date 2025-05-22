@@ -3,7 +3,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { db } from "@/db/drizzle";
 import { post, Post } from "@/db/schema"; // Import schema and types
-import { eq } from "drizzle-orm";
+import { eq, like } from "drizzle-orm"; // Import 'like' for search
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -47,6 +47,22 @@ export async function uploadImageToCloudinary(
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
     return null;
+  }
+}
+
+export async function searchBlogs(searchTerm: string): Promise<{
+  data: Post[] | null;
+  error: string | null;
+}> {
+  try {
+    const blogs = await db
+      .select()
+      .from(post)
+      .where(like(post.title, `%${searchTerm}%`)); // Search by title
+    return { data: blogs, error: null };
+  } catch (error) {
+    console.error("Error searching blogs:", error);
+    return { data: null, error: "Failed to search blogs" };
   }
 }
 
@@ -100,29 +116,6 @@ export async function getBlogById(
   } catch (error) {
     console.error(`Error fetching blog with id ${id}:`, error);
     return { data: null, error: `Failed to fetch blog with id ${id}` };
-  }
-}
-
-export async function updateBlogById(
-  id: number,
-  updatedPost: Partial<Post>
-): Promise<{ data: Post | null; error: string | null }> {
-  try {
-    const now = Math.floor(Date.now() / 1000); // Update timestamp
-    const [updatedBlog] = await db
-      .update(post)
-      .set({ ...updatedPost, updatedAt: now })
-      .where(eq(post.id, id))
-      .returning();
-
-    if (!updatedBlog) {
-      return { data: null, error: "Blog not found for update" };
-    }
-
-    return { data: updatedBlog, error: null };
-  } catch (error) {
-    console.error(`Error updating blog with id ${id}:`, error);
-    return { data: null, error: `Failed to update blog with id ${id}` };
   }
 }
 

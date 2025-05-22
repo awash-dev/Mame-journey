@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -21,28 +22,27 @@ import {
 } from "@/components/ui/pagination";
 import { FaFolder } from "react-icons/fa";
 
-// Import ReactMarkdown and remarkGfm
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-
 import { getBlogs, Post } from "@/lib/action"; // Assuming getBlogs is in "@/lib/actions"
 
-// Helper function to strip Markdown and truncate for card description
-const getExcerpt = (markdown: string | undefined, length: number = 150) => {
+// Helper function to strip Markdown and truncate for card description by WORD count
+const getExcerpt = (markdown: string | undefined, wordLimit: number = 25) => {
   if (!markdown) return "";
   // A very basic way to strip markdown for an excerpt.
   // For production, consider a more robust markdown-to-plain-text utility.
   const plainText = markdown.replace(/[`*#_~]/g, "").replace(/\n/g, " ");
-  return plainText.length > length
-    ? plainText.substring(0, length) + "..."
-    : plainText;
+
+  const words = plainText.split(/\s+/); // Split by one or more spaces
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(" ") + "...";
+  }
+  return plainText;
 };
 
 const BlogCard = ({ post }: { post: Post }) => {
   return (
     <Card
       className={cn(
-        "overflow-hidden transition-all duration-300",
+        "overflow-hidden transition-all duration-300 ",
         "border border-gray-800 shadow-lg hover:shadow-xl",
         "bg-card text-card-foreground",
         " hover:border-indigo-500/50 flex flex-col"
@@ -58,10 +58,10 @@ const BlogCard = ({ post }: { post: Post }) => {
         )}
       </div>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">{post.title}</CardTitle>
+        <CardTitle className="text-xl font-semibold">{getExcerpt(post.title, 15)}</CardTitle>
         <CardDescription className="text-muted-foreground">
-          {/* Display a plain text excerpt of the description */}
-          {getExcerpt(post.description)}
+          {/* Display a plain text excerpt of the description with a 25-word limit */}
+          {getExcerpt(post.description, 15)} 
         </CardDescription>
       </CardHeader>
       <CardHeader>
@@ -101,22 +101,29 @@ const BlogsPage = () => {
     ? allPosts.filter((post) => post.Catagory === selectedCategory)
     : allPosts;
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      setLoading(true);
+  // Re-fetch blogs function (moved from useEffect for reusability)
+  const fetchBlogs = useCallback(async () => {
+    setLoading(true);
+    setError(null); // Clear previous errors
+    try {
       const { data, error } = await getBlogs();
       if (data) {
         setAllPosts(data);
-        setLoading(false);
       }
       if (error) {
         setError(error);
-        setLoading(false);
       }
-    };
+    } catch (err: any) {
+      console.error("Error fetching blogs:", err);
+      setError(err.message || "An unknown error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Empty dependency array means this function is created once
 
+  useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [fetchBlogs]); // Now depends on fetchBlogs
 
   useEffect(() => {
     setCurrentPage(1); // Reset page when category changes
@@ -133,13 +140,31 @@ const BlogsPage = () => {
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
   if (loading) {
-    return <div className="py-12 text-center">Loading blogs...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="relative">
+          {/* Spinner circle */}
+          <div className="h-16 w-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          {/* Centered text inside spinner */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-sm font-bold text-indigo-600">Loading</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
+  // Error State with Refresh Button
   if (error) {
     return (
-      <div className="py-12 text-center text-red-500">
-        Error loading blogs: {error}
+      <div className="flex flex-col items-center justify-center py-12 text-red-500">
+        <p className="text-lg mb-4">Error loading blogs: {error}</p>
+        <button
+          onClick={fetchBlogs} // Call fetchBlogs again on click
+          className="px-6 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+        >
+          Refresh
+        </button>
       </div>
     );
   }
@@ -151,7 +176,9 @@ const BlogsPage = () => {
         <aside className="w-full lg:w-64 lg:sticky lg:top-20 h-fit">
           <Card className=" shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">Categories</CardTitle>
+              <CardTitle className="text-lg font-semibold">
+                Categories
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">

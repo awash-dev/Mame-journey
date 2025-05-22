@@ -16,7 +16,7 @@ const skillsData: SkillData[] = [
 
 const About = () => {
   return (
-    <div className="h-[calc(100vh-80px)]">
+    <div className="mt-14">
       <div
         className={cn(
           "container mx-auto px-4 py-8 sm:py-12 w-full",
@@ -31,13 +31,12 @@ const About = () => {
               alt="About Me"
               className={cn(
                 "w-full max-w-xs sm:max-w-sm md:max-w-md",
-                "h-[250px] sm:h-[300px] w-[250px] sm:w-[300px]",
-                "rounded-[40px] sm:rounded-[60px]",
+                "h-[250px]   w-[200px] sm:w-[250px]",
+                "rounded-[40px] sm:rounded-[30px]",
                 " shadow-xl sm:shadow-2xl",
                 " dark:border-gray-800"
               )}
             />
-           
           </div>
         </div>
 
@@ -61,10 +60,10 @@ const About = () => {
           >
             Hello! I'm Mohammed, a passionate software developer with a strong
             focus on creating engaging and performant web experiences. I
-            specialize in the JavaScript ecosystem, particularly with React and
-            Next.js. My goal is to build applications that not only meet
-            technical requirements but also provide exceptional user
-            experiences.
+            specialize in the JavaScript ecosystem & python, particularly with
+            React Native , Next.js, Django , fast API, Flask. My goal is to
+            build applications that not only meet technical requirements but
+            also provide exceptional user experiences.
           </p>
 
           {/* Skills Section */}
@@ -80,7 +79,7 @@ const About = () => {
             <div className="flex flex-wrap justify-center md:justify-start items-center gap-1 sm:gap-2">
               {skillsData.map((skill, index) => (
                 <React.Fragment key={index}>
-                  <span 
+                  <span
                     className={cn(
                       "text-sm sm:text-base font-medium",
                       "text-gray-700 dark:text-gray-300"
