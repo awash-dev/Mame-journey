@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"; 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
@@ -24,7 +24,7 @@ const formSchema = z.object({
     message: "Title must be at least 2 characters.",
   }),
   category: z.string().optional(),
-  image: z.instanceof(FileList).optional(),
+  image: z.any().optional(), // Change this line
   description: z.string().optional(),
 });
 
@@ -46,12 +46,12 @@ const CreatePostForm = () => {
       description: "",
     },
   });
- 
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    form.setValue("image", e.target.files as FileList);
+    form.setValue("image", e.target.files); // No need to cast to FileList
 
     const reader = new FileReader();
     reader.onloadend = () => {
