@@ -67,24 +67,24 @@ const BlogsPage = () => {
       <div className="container mx-auto px-4 gap-8">
         <main className="w-full ">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 shadow-md rounded-lg overflow-hidden">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 shadow-md rounded-lg overflow-hidden">
+              <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Title
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Description
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Image
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
                 {currentPosts.map((post) => (
                   <motion.tr
                     key={post.id}
@@ -92,13 +92,13 @@ const BlogsPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                       {post.title}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
                       {post.description}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
                       {post.image && (
                         <img
                           src={post.image}
@@ -107,12 +107,12 @@ const BlogsPage = () => {
                         />
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(String(post.id))}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-600"
                       >
                         <FaTrash size={16} />
                       </Button>
