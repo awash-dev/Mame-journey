@@ -12,27 +12,27 @@ export default function Footer() {
   const socialLinks = [
     {
       icon: <FaLinkedin size={24} />,
-      href: "https://www.linkedin.com/in/your-linkedin-profile",
+      href: "https://www.linkedin.com/in/mohammed-hussen-mohammed-70981b299/",
       label: "LinkedIn",
     },
     {
       icon: <FaTelegram size={24} />,
-      href: "https://t.me/your-telegram-username",
+      href: "https://t.me/m0h4mm3d_hu553n",
       label: "Telegram",
     },
     {
       icon: <FaXTwitter size={24} />,
-      href: "https://twitter.com/your-twitter-handle",
+      href: "https://twitter.com/awash_dev",
       label: "X",
     },
     {
       icon: <FaGithub size={24} />,
-      href: "https://github.com/your-github-username",
+      href: "https://github.com/Awash_dev",
       label: "GitHub",
     },
     {
       icon: <FaInstagram size={24} />,
-      href: "https://www.instagram.com/your-instagram",
+      href: "https://www.instagram.com/awash_dev",
       label: "Instagram",
     },
   ];
