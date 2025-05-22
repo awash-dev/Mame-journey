@@ -27,7 +27,7 @@ export default function Footer() {
     },
     {
       icon: <FaGithub size={24} />,
-      href: "https://github.com/Awash_dev",
+      href: "https://github.com/Awash-dev",
       label: "GitHub",
     },
     {
