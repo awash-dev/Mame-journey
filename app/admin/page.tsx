@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -37,7 +36,6 @@ const CreatePostForm = () => {
   const router = useRouter();
   const [status, setStatus] = useState<SubmissionStatus>("idle");
   const [uploading, setUploading] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -61,8 +59,6 @@ const CreatePostForm = () => {
     };
     reader.readAsDataURL(file);
   };
-
-  
 
   const onSubmit = async (values: FormValues) => {
     setStatus("idle");
