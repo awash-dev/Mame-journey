@@ -59,20 +59,20 @@ const BlogCard = ({ post }: { post: Post }) => {
       </div>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{getExcerpt(post.title, 15)}</CardTitle>
-        {*
-         <CardDescription className="text-muted-foreground">
-          {/* Display a plain text excerpt of the description with a 25-word limit */}
+        
+                {/*   <CardDescription className="text-muted-foreground">
+ Display a plain text excerpt of the description with a 25-word limit
           {getExcerpt(post.description, 15)} 
-        </CardDescription>
-        *}
+        </CardDescription> */}
+        
       </CardHeader>
-      {*
+    
        <CardHeader>
         <CardDescription className="flex items-center gap-4 ">
           <FaFolder className="text-[20px]" /> {post.Catagory}
         </CardDescription>
       </CardHeader>
-      *}
+      
       <CardContent className="flex-grow flex flex-col justify-end">
         <a
           href={`/post/${post.id}`} // Ensure this path matches your dynamic route
