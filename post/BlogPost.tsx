@@ -59,10 +59,12 @@ const BlogCard = ({ post }: { post: Post }) => {
       </div>
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{getExcerpt(post.title, 15)}</CardTitle>
-        <CardDescription className="text-muted-foreground">
+        {*
+         <CardDescription className="text-muted-foreground">
           {/* Display a plain text excerpt of the description with a 25-word limit */}
           {getExcerpt(post.description, 15)} 
         </CardDescription>
+        *}
       </CardHeader>
       {*
        <CardHeader>
