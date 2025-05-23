@@ -64,11 +64,13 @@ const BlogCard = ({ post }: { post: Post }) => {
           {getExcerpt(post.description, 15)} 
         </CardDescription>
       </CardHeader>
-      <CardHeader>
+      {*
+       <CardHeader>
         <CardDescription className="flex items-center gap-4 ">
           <FaFolder className="text-[20px]" /> {post.Catagory}
         </CardDescription>
       </CardHeader>
+      *}
       <CardContent className="flex-grow flex flex-col justify-end">
         <a
           href={`/post/${post.id}`} // Ensure this path matches your dynamic route
