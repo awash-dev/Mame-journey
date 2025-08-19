@@ -1,143 +1,204 @@
 "use client";
 
-import Link from "next/link"; import React, { useState, useEffect, useRef } from "react"; import { FaBars, FaTimes } from "react-icons/fa"; import { BsSun, BsMoonStarsFill } from "react-icons/bs"; import { motion, AnimatePresence } from "framer-motion"; import { useTheme } from "next-themes"; import { cn } from "@/lib/utils";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
+import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
-const Navbar: React.FC = () => { const [mobileMenuOpen, setMobileMenuOpen] = useState(false); const [textBoxOpen, setTextBoxOpen] = useState(false); const [message, setMessage] = useState(""); const [charCount, setCharCount] = useState(0); const textAreaRef = useRef<HTMLTextAreaElement | null>(null); const { theme, setTheme } = useTheme(); const isDark = theme === "dark";
+interface BlogPost {
+  id: string;
+  title: string;
+  url: string;
+  image?: string | null;
+}
 
-// Auto expand textarea height useEffect(() => { if (textAreaRef.current) { textAreaRef.current.style.height = "auto"; textAreaRef.current.style.height = ${textAreaRef.current.scrollHeight}px; } }, [message]);
+const Navbar: React.FC = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<BlogPost[]>([]);
+  const [searchIndex, setSearchIndex] = useState(-1);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
 
-const NavLink = ({ href, label }: { href: string; label: string }) => ( <Link href={href} onClick={() => setMobileMenuOpen(false)} className="text-lg hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors" > {label} </Link> );
+  /** Fetch search results */
+  const fetchSearchResults = useCallback(async (term: string) => {
+    if (!term.trim()) return setSearchResults([]);
+    try {
+      const res = await fetch(`/api/search-posts?query=${encodeURIComponent(term)}`);
+      const { data, error } = await res.json();
+      if (error || !res.ok) throw new Error(error || "Search failed");
+      const results = data.map((post: any) => ({
+        id: post.id,
+        title: post.title,
+        url: `/post/${post.id}`,
+        image: post.image,
+      }));
+      setSearchResults(results);
+      setSearchIndex(-1);
+    } catch (err) {
+      console.error(err);
+      setSearchResults([]);
+    }
+  }, []);
 
-const DarkModeToggle = () => ( <motion.button onClick={() => setTheme(isDark ? "light" : "dark")} aria-label="Toggle Dark Mode" aria-pressed={isDark} whileTap={{ scale: 0.9 }} className="relative w-12 h-6 rounded-full flex items-center bg-gray-200 dark:bg-gray-700" > <motion.div className="absolute w-4 h-4 rounded-full bg-white dark:bg-gray-200 shadow-md flex items-center justify-center" animate={{ x: isDark ? "calc(100% + 0.5rem)" : "0.25rem" }} transition={{ type: "spring", stiffness: 700, damping: 30 }} > <AnimatePresence mode="wait"> {isDark ? ( <motion.span key="moon" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} > <BsMoonStarsFill className="w-3 h-3 text-gray-700" /> </motion.span> ) : ( <motion.span key="sun" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} > <BsSun className="w-3 h-3 text-yellow-500" /> </motion.span> )} </AnimatePresence> </motion.div> </motion.button> );
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const term = e.target.value;
+      setSearchTerm(term);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => fetchSearchResults(term), 300);
+    },
+    [fetchSearchResults]
+  );
 
-return ( <> {/* Navbar */} <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="bg-white dark:bg-gray-900 fixed top-0 z-50 w-full px-4 md:px-6 lg:px-8 py-3 h-[80px] items-center shadow" > <div className="container mx-auto flex items-center justify-between"> <Link
-href="/"
-className="font-bold text-[20px] md:text-2xl font-serif"
-> Mohammed's <span className="text-indigo-600 dark:text-indigo-400"> Blog</span> </Link>
+  /** Handle keyboard navigation inside modal */
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (!searchModalOpen) return;
+      if (e.key === "Escape") return setSearchModalOpen(false);
+      if (!searchResults.length) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSearchIndex((i) => Math.min(i + 1, searchResults.length - 1));
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSearchIndex((i) => Math.max(i - 1, 0));
+      }
+      if (e.key === "Enter" && searchIndex > -1) {
+        window.location.href = searchResults[searchIndex].url;
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [searchModalOpen, searchResults, searchIndex]);
 
-<div className="hidden md:flex items-center space-x-6">
-        <NavLink href="/" label="Home" />
-        <NavLink href="/About" label="About" />
-        <NavLink href="/Blog" label="Blog" />
-        <button
-          onClick={() => setTextBoxOpen(!textBoxOpen)}
-          aria-label="Open Text Box"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
-        >
-          Write
-        </button>
-        <DarkModeToggle />
-        <Link
-          href="/Contact"
-          className={cn(
-            "ml-4 px-4 py-2 border-2 rounded-lg transition font-mono shadow",
-            "hover:text-white hover:bg-black dark:hover:text-black dark:hover:bg-white",
-            "text-black dark:text-white border-black dark:border-white"
-          )}
-        >
-          Contact
-        </Link>
-      </div>
+  /** Auto-focus input when modal opens */
+  useEffect(() => {
+    if (searchModalOpen) {
+      setSearchTerm("");
+      setSearchResults([]);
+      setTimeout(() => searchInputRef.current?.focus(), 100);
+    }
+  }, [searchModalOpen]);
 
-      <div className="md:hidden flex items-center space-x-4">
-        <button
-          onClick={() => setTextBoxOpen(!textBoxOpen)}
-          aria-label="Open Text Box"
-          className="px-3 py-1 bg-indigo-600 text-white rounded-md shadow"
-        >
-          Write
-        </button>
-        <DarkModeToggle />
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle Menu"
-        >
-          {mobileMenuOpen ? (
-            <FaTimes className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-          ) : (
-            <FaBars className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-          )}
-        </button>
-      </div>
-    </div>
-  </motion.nav>
-
-  {/* Text Box Modal */}
-  <AnimatePresence>
-    {textBoxOpen && (
-      <>
+  /** Search modal content */
+  const SearchModal = () => (
+    <AnimatePresence>
+      {searchModalOpen && (
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black z-40"
-          onClick={() => setTextBoxOpen(false)}
-        />
-
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-6 w-full max-w-lg flex flex-col"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => setSearchModalOpen(false)}
         >
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-            Write your message
-          </h2>
-          <textarea
-            ref={textAreaRef}
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value);
-              setCharCount(e.target.value.length);
-            }}
-            placeholder="Type here..."
-            className="w-full resize-none border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-black dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-            rows={3}
-          />
-          <div className="flex justify-between items-center mt-3">
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {charCount} characters
-            </span>
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.9 }}
+            className="bg-white dark:bg-gray-800 w-full max-w-lg rounded-xl p-6 relative"
+            onClick={(e) => e.stopPropagation()} // prevent modal close on inner click
+          >
             <button
-              onClick={() => {
-                console.log("Message sent:", message);
-                setMessage("");
-                setCharCount(0);
-                setTextBoxOpen(false);
-              }}
-              className="px-5 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg shadow hover:opacity-90 transition"
+              className="absolute top-4 right-4 text-gray-500 dark:text-gray-400"
+              onClick={() => setSearchModalOpen(false)}
             >
-              Send
+              <FaTimes size={20} />
             </button>
-          </div>
+            <div className="flex flex-col">
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="Search posts..."
+                className="w-full p-3 rounded-md border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <div className="mt-4 max-h-64 overflow-y-auto">
+                {searchTerm && searchResults.length === 0 && (
+                  <p className="text-gray-500 dark:text-gray-400 text-center">No results found.</p>
+                )}
+                {searchResults.map((post, index) => (
+                  <div
+                    key={post.id}
+                    onClick={() => (window.location.href = post.url)}
+                    className={cn(
+                      "p-3 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3",
+                      searchIndex === index && "bg-indigo-100 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100"
+                    )}
+                  >
+                    {post.image ? (
+                      <img
+                        src={post.image}
+                        className="w-12 h-12 object-cover rounded"
+                        alt={post.title}
+                        onError={(e) => {
+                          e.currentTarget.src = `https://placehold.co/64x64/E0E0E0/666666?text=No+Image`;
+                        }}
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">
+                        No Img
+                      </div>
+                    )}
+                    <span className="text-black dark:text-white">{post.title}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
-      </>
-    )}
-  </AnimatePresence>
+      )}
+    </AnimatePresence>
+  );
 
-  {/* Mobile Menu */}
-  <AnimatePresence>
-    {mobileMenuOpen && (
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.2 }}
-        className="md:hidden fixed top-[80px] left-0 w-full bg-white dark:bg-gray-900 z-40 py-4 shadow-md"
-      >
-        <div className="flex flex-col items-center space-y-6 px-4">
-          <NavLink href="/" label="Home" />
-          <NavLink href="/About" label="About" />
-          <NavLink href="/Blog" label="Blog" />
-          <NavLink href="/Contact" label="Contact" />
+  return (
+    <nav className="w-full bg-white dark:bg-gray-900 shadow-md fixed top-0 left-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="font-bold text-xl text-black dark:text-white">
+            MyBlog
+          </Link>
+          <div className="hidden md:flex gap-4">
+            <Link href="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Home</Link>
+            <Link href="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About</Link>
+          </div>
         </div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-</>
 
-); };
+        <div className="flex items-center gap-4">
+          {/* Search icon opens modal */}
+          <button onClick={() => setSearchModalOpen(true)} className="text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors">
+            <FaSearch size={18} />
+          </button>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="md:hidden text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+          >
+            {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+          <Link href="/" className="block px-4 py-2 text-gray-700 dark:text-gray-200">Home</Link>
+          <Link href="/about" className="block px-4 py-2 text-gray-700 dark:text-gray-200">About</Link>
+        </div>
+      )}
+
+      {/* Search modal */}
+      <SearchModal />
+    </nav>
+  );
+};
 
 export default Navbar;
-
