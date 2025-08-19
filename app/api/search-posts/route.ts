@@ -1,36 +1,39 @@
-// app/api/search-posts/route.ts
 import { NextResponse } from "next/server";
-import { searchBlogs } from "@/lib/action"; // Import the searchBlogs action
+import { searchBlogs } from "@/lib/action"; // your search function
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
 
   if (!query) {
-    return NextResponse.json(
+    const res = NextResponse.json(
       { data: [], error: "Query parameter is missing" },
       { status: 400 }
     );
+    res.headers.set("Access-Control-Allow-Origin", "*"); // allow RN fetch
+    return res;
   }
 
   try {
-    // Call the searchBlogs action from "@/lib/action"
     const { data: results, error } = await searchBlogs(query);
 
     if (error) {
-      console.error("Error from searchBlogs action:", error);
-      return NextResponse.json({ data: [], error: error }, { status: 500 });
+      console.error("Error from searchBlogs:", error);
+      const res = NextResponse.json({ data: [], error }, { status: 500 });
+      res.headers.set("Access-Control-Allow-Origin", "*");
+      return res;
     }
 
-    // The searchBlogs action already returns Post[], so no further mapping is needed
-    // unless you specifically want to transform the data for the API response.
-    // Assuming 'results' is already an array of Post objects or null.
-    return NextResponse.json({ data: results, error: null });
-  } catch (error: any) {
-    console.error("API route unexpected error:", error);
-    return NextResponse.json(
-      { data: [], error: "An unexpected error occurred during search" },
+    const res = NextResponse.json({ data: results, error: null });
+    res.headers.set("Access-Control-Allow-Origin", "*");
+    return res;
+  } catch (err: any) {
+    console.error("Unexpected API error:", err);
+    const res = NextResponse.json(
+      { data: [], error: "Unexpected server error" },
       { status: 500 }
     );
+    res.headers.set("Access-Control-Allow-Origin", "*");
+    return res;
   }
 }
