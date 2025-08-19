@@ -44,18 +44,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen font-heebo mt-10">
-      {/* Google Font */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin="anonymous"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap"
-        rel="stylesheet"
-      />
-
       <main className="flex-1 flex items-center justify-center px-4 py-16 bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
         <div className="max-w-3xl w-full text-center">
           <motion.h1
@@ -98,83 +86,63 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          {/* SVG Illustration - Enhanced for realism */}
+          {/* Clean SVG Illustration */}
           <motion.div
             variants={imageVariants}
             initial="hidden"
             animate="visible"
-            className="mt-10 flex justify-center h-[300px]"
+            className="mt-12 flex justify-center h-[280px]"
           >
             <svg
               viewBox="0 0 800 400"
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
               style={{ width: "100%", height: "auto" }}
             >
-              {/* Desk */}
-              <g id="desk">
-                <rect x="100" y="250" width="600" height="20" rx="5" fill="#A0522D" /> {/* Desk top */}
-                <rect x="120" y="270" width="20" height="100" rx="5" fill="#8B4513" /> {/* Left leg */}
-                <rect x="660" y="270" width="20" height="100" rx="5" fill="#8B4513" /> {/* Right leg */}
-                <rect x="120" y="360" width="560" height="10" rx="3" fill="#8B4513" /> {/* Crossbar */}
-              </g>
+              {/* Background Circle */}
+              <circle cx="400" cy="200" r="180" fill="url(#grad)" opacity="0.15" />
+
+              <defs>
+                <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#6366F1" />
+                  <stop offset="100%" stopColor="#EC4899" />
+                </linearGradient>
+              </defs>
 
               {/* Laptop */}
-              <g id="laptop">
-                {/* Laptop base */}
-                <rect x="300" y="230" width="200" height="15" rx="5" fill="#333" />
-                {/* Laptop screen (back) */}
-                <rect x="305" y="100" width="190" height="130" rx="5" fill="#222" />
-                {/* Laptop screen (display area) */}
-                <rect x="315" y="110" width="170" height="110" fill="#4CAF50" /> {/* Green screen for "code" */}
-                {/* Keyboard details */}
-                <rect x="310" y="235" width="180" height="5" fill="#555" rx="2" />
-                <rect x="310" y="242" width="180" height="5" fill="#555" rx="2" />
+              <g>
+                <rect x="280" y="180" width="240" height="140" rx="12" fill="#111" />
+                <rect x="295" y="195" width="210" height="110" rx="8" fill="#1E293B" />
+                <text
+                  x="400"
+                  y="250"
+                  fontSize="18"
+                  textAnchor="middle"
+                  fill="#38BDF8"
+                  fontFamily="monospace"
+                >
+                  {"<Code />"}
+                </text>
               </g>
 
-              {/* Human */}
-              <g id="human">
-                {/* Head */}
-                <circle cx="400" cy="90" r="30" fill="#FFDAB9" stroke="#A0522D" strokeWidth="2" />
-                {/* Body */}
-                <rect x="370" y="120" width="60" height="80" rx="10" fill="#6A5ACD" /> {/* Shirt/Sweater */}
-                {/* Arms */}
-                <path d="M370 130 Q350 150 360 200" stroke="#FFDAB9" strokeWidth="10" fill="none" strokeLinecap="round" /> {/* Left arm */}
-                <path d="M430 130 Q450 150 440 200" stroke="#FFDAB9" strokeWidth="10" fill="none" strokeLinecap="round" /> {/* Right arm */}
-                {/* Hands (simplified) */}
-                <circle cx="360" cy="200" r="8" fill="#FFDAB9" />
-                <circle cx="440" cy="200" r="8" fill="#FFDAB9" />
+              {/* Coffee Cup */}
+              <g>
+                <circle cx="560" cy="260" r="25" fill="#E5E7EB" />
+                <circle cx="560" cy="260" r="15" fill="#6B21A8" />
               </g>
 
-              {/* Chair */}
-              <g id="chair">
-                <rect x="360" y="200" width="80" height="10" rx="5" fill="#555" /> {/* Seat */}
-                <rect x="370" y="130" width="60" height="70" rx="5" fill="#555" /> {/* Backrest */}
-                <rect x="375" y="210" width="10" height="60" fill="#444" /> {/* Left leg */}
-                <rect x="415" y="210" width="10" height="60" fill="#444" /> {/* Right leg */}
+              {/* Plant */}
+              <g>
+                <rect x="200" y="250" width="40" height="50" rx="6" fill="#8B5CF6" />
+                <path
+                  d="M220 250 Q200 210 220 190 Q240 210 220 250"
+                  fill="#22C55E"
+                />
               </g>
 
-              {/* Accessories */}
-              <g id="accessories">
-                {/* Lamp */}
-                <circle cx="200" cy="240" r="10" fill="#888" /> {/* Base */}
-                <rect x="195" y="180" width="10" height="60" fill="#888" /> {/* Stand */}
-                <polygon points="180,180 220,180 230,160 170,160" fill="#FFD700" /> {/* Shade */}
-                <circle cx="200" cy="170" r="5" fill="#FFF" /> {/* Light source */}
-
-                {/* Coffee Mug */}
-                <rect x="550" y="230" width="40" height="20" rx="5" fill="#A0522D" /> {/* Mug body */}
-                <path d="M590 235 A10 10 0 1 1 590 245" stroke="#A0522D" strokeWidth="3" fill="none" /> {/* Handle */}
-                <circle cx="570" cy="230" r="10" fill="#6F4E37" /> {/* Coffee */}
-
-                {/* Plant */}
-                <rect x="620" y="230" width="30" height="20" rx="5" fill="#8B4513" /> {/* Pot */}
-                <path d="M635 230 Q625 200 645 200 Q655 230 635 230 Z" fill="#228B22" /> {/* Leaves */}
-                <path d="M635 230 Q640 205 620 205 Q610 230 635 230 Z" fill="#228B22" /> {/* Leaves */}
-
-                {/* Mouse */}
-                <rect x="510" y="240" width="20" height="15" rx="5" fill="#444" />
-                <circle cx="520" cy="245" r="3" fill="#888" /> {/* Scroll wheel */}
+              {/* User Avatar */}
+              <g>
+                <circle cx="400" cy="100" r="35" fill="#FACC15" />
+                <circle cx="400" cy="90" r="12" fill="#1E293B" />
               </g>
             </svg>
           </motion.div>
