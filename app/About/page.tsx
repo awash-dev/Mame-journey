@@ -2,6 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface SkillData {
   name: string;
@@ -16,87 +17,89 @@ const skillsData: SkillData[] = [
 
 const About = () => {
   return (
-    <div className="mt-14">
+    <section className="mt-20">
       <div
         className={cn(
-          "container mx-auto px-4 py-8 sm:py-12 w-full",
-          "flex flex-col md:flex-row items-center gap-8 md:gap-12"
+          "container mx-auto px-6 py-12 w-full",
+          "flex flex-col md:flex-row items-center gap-12"
         )}
       >
-        {/* Image Section (Left on Desktop) */}
-        <div className="w-full py-12 md:py-0 md:w-1/2 flex justify-center">
+        {/* Image Section */}
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="w-full md:w-1/2 flex justify-center"
+        >
           <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-[40px] blur opacity-40"></div>
             <img
-              src="/About.jpg" // Replace with your image path
+              src="/About.jpg"
               alt="About Me"
               className={cn(
-                "w-full max-w-xs sm:max-w-sm md:max-w-md",
-                "h-[250px]   w-[200px] sm:w-[250px]",
-                "rounded-[40px] sm:rounded-[30px]",
-                " shadow-xl sm:shadow-2xl",
-                " dark:border-gray-800"
+                "relative rounded-[40px] w-[220px] sm:w-[260px] md:w-[300px] h-[280px] object-cover",
+                "shadow-xl border-4 border-white dark:border-gray-800"
               )}
             />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Text and Skills Section (Right on Desktop) */}
-        <div className="w-full md:w-1/2 -mt-8 md:-mt-0 md:space-y-6">
+        {/* Text Section */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="w-full md:w-1/2 space-y-6"
+        >
           <h2
             className={cn(
-              "text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text",
+              "text-3xl md:text-4xl font-bold text-transparent bg-clip-text",
               "bg-gradient-to-r from-purple-400 to-pink-600",
-              "text-center md:text-left tracking-tight"
+              "text-center md:text-left"
             )}
           >
             About Me
           </h2>
+
           <p
             className={cn(
-              "text-black dark:text-white leading-relaxed",
-              "text-base sm:text-lg",
-              "text-center md:text-left"
+              "text-gray-700 dark:text-gray-300 leading-relaxed",
+              "text-base sm:text-lg text-center md:text-left"
             )}
           >
-            Hello! I'm Mohammed, a passionate software developer with a strong
-            focus on creating engaging and performant web experiences. I
-            specialize in the JavaScript ecosystem & python, particularly with
-            React Native , Next.js, Django , fast API, Flask. My goal is to
-            build applications that not only meet technical requirements but
-            also provide exceptional user experiences.
+            Hello! I'm <span className="font-semibold">Mohammed</span>, a
+            passionate software developer with a strong focus on creating
+            engaging and performant web experiences. I specialize in the{" "}
+            <span className="font-medium">JavaScript</span> ecosystem &{" "}
+            <span className="font-medium">Python</span>, particularly with{" "}
+            <span className="font-medium">
+              React Native, Next.js, Django, FastAPI, Flask
+            </span>
+            . My goal is to build applications that not only meet technical
+            requirements but also provide exceptional user experiences.
           </p>
 
           {/* Skills Section */}
-          <div className="pt-2">
-            <h3
-              className={cn(
-                "text-xl sm:text-2xl font-semibold dark:text-white text-black mb-3 sm:mb-4",
-                "text-center md:text-left tracking-wide"
-              )}
-            >
+          <div>
+            <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-center md:text-left text-gray-900 dark:text-white">
               Skills
             </h3>
-            <div className="flex flex-wrap justify-center md:justify-start items-center gap-1 sm:gap-2">
+            <div className="flex flex-wrap justify-center md:justify-start gap-3">
               {skillsData.map((skill, index) => (
-                <React.Fragment key={index}>
-                  <span
-                    className={cn(
-                      "text-sm sm:text-base font-medium",
-                      "text-gray-700 dark:text-gray-300"
-                    )}
-                  >
-                    {skill.name}
-                  </span>
-                  {index !== skillsData.length - 1 && (
-                    <span className="text-gray-500 dark:text-gray-400">|</span>
-                  )}
-                </React.Fragment>
+                <span
+                  key={index}
+                  className="px-3 py-1 text-sm font-medium bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 rounded-full hover:scale-105 transition-transform"
+                >
+                  {skill.name}
+                </span>
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 };
 
