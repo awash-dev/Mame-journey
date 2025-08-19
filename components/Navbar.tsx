@@ -209,9 +209,9 @@ const Navbar: React.FC = () => {
       {/* Desktop Links */}
       <div className="hidden md:flex items-center gap-6">
         <NavLink href="/" label="Home" />
-        <NavLink href="/about" label="About" />
-        <NavLink href="/blog" label="Blog" />
-        <NavLink href="/contact" label="Contact" />
+        <NavLink href="/About" label="About" />
+        <NavLink href="/Blog" label="Blog" />
+        <NavLink href="/Contact" label="Contact" />
         <DarkModeToggle />
         <button onClick={() => setSearchBoxOpen(true)} className="ml-4 text-gray-700 dark:text-gray-200">
           <FaSearch size={20} />
