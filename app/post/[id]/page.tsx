@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getBlogById, getBlogs, Post } from "@/lib/action"; // Adjust import path as needed
+import { getBlogById, getBlogs, Post } from "@/lib/action"; 
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FaFolder, FaUserCircle } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 export default function BlogPostPage() {
   const { id } = useParams();
@@ -41,24 +42,24 @@ export default function BlogPostPage() {
 
     fetchBlogPost();
   }, [id]);
- if (loading) {
+
+  // Loading State
+  if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-500">
-         
-        </div>
+      <div className="flex items-center justify-center py-24">
+        <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-indigo-500"></div>
       </div>
     );
   }
 
-  // Error State with Refresh Button
+  // Error State
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-red-500">
-        <p className="text-lg mb-4">Error loading blogs: {error}</p>
+      <div className="flex flex-col items-center justify-center py-16 text-red-500">
+        <p className="text-lg font-medium mb-4">⚠️ Error loading blog: {error}</p>
         <button
-          onClick={getBlogs} // Call fetchBlogs again on click
-          className="px-6 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+          onClick={getBlogs}
+          className="px-6 py-2 bg-red-600 text-white rounded-md shadow-md hover:bg-red-700 transition-colors"
         >
           Refresh
         </button>
@@ -75,56 +76,66 @@ export default function BlogPostPage() {
   }
 
   return (
-    <div className=" py-6 bg-background mt-20 ">
-      <div className=" mx-auto px-14 w-full">
+    <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="max-w-4xl mx-auto px-6 py-6">
         <Link
           href="/Blog"
-          className="fixed items-center  flex text-lg font-medium hover:underline"
+          className="flex items-center text-sm font-medium text-indigo-600 hover:underline"
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blogs
         </Link>
-        <Card className="w-full max-w-2xl mx-auto shadow-lg">
-          <CardContent className="space-y-4">
-            {blogPost.image && (
-              <div className="relative w-full overflow-hidden rounded-md aspect-video">
-                <img
-                  src={blogPost.image}
-                  alt={blogPost.title}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            )}
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">
-                {blogPost.title}
-              </CardTitle>
-            </CardHeader>
+      </div>
 
-            <div className="flex gap-4">
-              <p className="text-sm text-gray-500 flex">
-                <FaFolder className="mr-2 h-4 w-4" /> {blogPost.Catagory}
-              </p>
+      {/* Hero Image */}
+      {blogPost.image && (
+        <div className="relative w-full max-h-[450px] overflow-hidden">
+          <img
+            src={blogPost.image}
+            alt={blogPost.title}
+            className="w-full h-[450px] object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent flex items-end p-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
+              {blogPost.title}
+            </h1>
+          </div>
+        </div>
+      )}
 
+      {/* Blog Content */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-3xl mx-auto px-6 py-10"
+      >
+        <Card className="shadow-xl border-0">
+          <CardContent className="space-y-6">
+            {/* Metadata */}
+            <div className="flex flex-wrap gap-6 text-gray-500 text-sm">
+              <span className="flex items-center gap-2">
+                <FaFolder /> {blogPost.Catagory}
+              </span>
               {blogPost.createdAt && (
-                <p className="text-sm text-gray-500">
+                <span>
                   {new Date(blogPost.createdAt * 1000).toLocaleDateString()}
-                </p>
+                </span>
               )}
               {blogPost.authorId && (
-                <p className="text-sm text-gray-500">
-                  <FaUserCircle className="text-sm text-gray-500 " />{" "}
-                  {blogPost.authorId}
-                </p>
+                <span className="flex items-center gap-2">
+                  <FaUserCircle /> {blogPost.authorId}
+                </span>
               )}
             </div>
-            <CardDescription className="text-gray-600 text-xl">
+
+            {/* Description / Body */}
+            <CardDescription className="text-gray-700 leading-relaxed text-lg">
               {blogPost.description}
             </CardDescription>
-
-            {/* Add more details here as needed */}
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
     </div>
   );
 }
