@@ -202,13 +202,16 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="w-full bg-white dark:bg-gray-900 shadow-md px-6 py-4 flex items-center justify-between relative z-50">
-      <Link href="/" className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">MyBlog</Link>
+      <Link href="/" className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+        Mohammed's Blog
+      </Link>
 
       {/* Desktop Links */}
       <div className="hidden md:flex items-center gap-6">
         <NavLink href="/" label="Home" />
         <NavLink href="/about" label="About" />
         <NavLink href="/blog" label="Blog" />
+        <NavLink href="/contact" label="Contact" />
         <DarkModeToggle />
         <button onClick={() => setSearchBoxOpen(true)} className="ml-4 text-gray-700 dark:text-gray-200">
           <FaSearch size={20} />
@@ -239,6 +242,7 @@ const Navbar: React.FC = () => {
             <NavLink href="/" label="Home" />
             <NavLink href="/about" label="About" />
             <NavLink href="/blog" label="Blog" />
+            <NavLink href="/contact" label="Contact" />
           </motion.div>
         )}
       </AnimatePresence>
